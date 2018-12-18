@@ -4,8 +4,8 @@
     <head>
         <title>Worms</title>
         <meta charset="UTF-8">
-        <meta name="description" content="Game like worms">
-        <meta name="keywords" content="game, worms">
+        <meta name="description" content="Wormihilation">
+        <meta name="keywords" content="game, worms, Wormihilation">
         <meta name="author" content="Kamil Brodziak, Maciej Paluszkiewicz">
         <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0" />
         <link rel="stylesheet" type="text/css" href="styles/main.css">
@@ -15,14 +15,50 @@
     <body>
         <div id="container">
             <nav id="nav">
-                
+                <div class="players">
+                    <div id="player1">
+                        <button class="player-name">PLAYER1 NAME</button>
+                        <figure class="game-button" id="toggle-unit-1">
+                            <img src="img/Button-Nuke.png" />
+                        </figure>
+                        <figure class="game-button" id="weapon-nuke-1">
+                            <img src="img/Button-Nuke.png" />
+                        </figure>
+                        <figure class="game-button" id="weapon-bazooka-1">
+                            <img src="img/Button-Bazooka.png" />
+                        </figure>
+                        <figure class="game-button" id="weapon-minigun-1">
+                            <img src="img/Button-Minigun.png" />
+                        </figure>
+                    </div>
+                    <div id="player2">
+                        <button class="player-name">PLAYER2 NAME</button>
+                        <figure class="game-button" id="toggle-unit-2">
+                            <img src="img/Button-Nuke.png" />
+                        </figure>
+                        <figure class="game-button" id="weapon-nuke-2">
+                            <img src="img/Button-Nuke.png" />
+                        </figure>
+                        <figure class="game-button" id="weapon-bazooka-2">
+                            <img src="img/Button-Bazooka.png" />
+                        </figure>
+                        <figure class="game-button" id="weapon-minigun-2">
+                            <img src="img/Button-Minigun.png" />
+                        </figure>
+                    </div>
+                </div>
+                <button id="menu-button">MENU BUTTON</button>
             </nav>
             <div id="gameBoard">
                 <canvas id="canvas">
 
                 </canvas>
                 <footer id="footer">
-
+                    <div id="mark">WORMIHILATION</div>
+                    <div class="creators">
+                        <div id="creator1">Kamil Brodziak</div>
+                        <div id="creator2">Maciej Paluszkiewicz</div>
+                    </div>
                 </footer>
             </div>
         </div>

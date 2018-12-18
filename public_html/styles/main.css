@@ -23,10 +23,92 @@ html, body {
 #nav {
     width: 20%;
     border: 1px solid blue;
+    background: saddlebrown;
+}
+
+.players{
+    display: flex;
+    height: 90%;
+    background: olive;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+
+}
+
+#player1 {
+    margin-top: 4%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#player2 {
+    margin-top: 4%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game-button {
+    display: flex;
+    height: 15%;
+    width: 15%;
+    margin-bottom: 4%;
+    justify-items: center;
+    align-content: center;
+}
+
+.player-name {
+    display: flex;
+    width: 80%;
+    height: 15%;
+    margin-bottom: 4%;
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+}
+
+.game-button img{
+    height: 100%;
+    width: 100%;
+    border: 3px solid #010101;
+}
+
+#menu-button{
+    height: 10%;
+    width: 100%;
+
+    border-top: 1px solid darkolivegreen;
 }
 
 #footer {
+    /*display: flex;*/
     width: 100%;
     height: 10%;
     border: 1px solid black;
+    background-color: saddlebrown;
+    font-size: 60px;
+    font-weight: bold;
+
+}
+#footer #mark{
+    display: block;
+    justify-content: center;
+    text-align: center;
+    padding-top: 1%;
+}
+
+#footer .creators{
+    display: flex;
+    position: absolute;
+    justify-content: right;
+    right: 2%;
+    bottom: 2%;
+    text-align: end;
+    margin-right: 20px;
+    font-size: 36px;
+    flex-direction: column;
 }
