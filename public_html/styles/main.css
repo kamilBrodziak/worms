@@ -38,7 +38,7 @@ html, body {
 
 #game-menu {
     position: absolute;
-    display: block;
+    display: none;
     top: 35%;
     left: 40%;
     font-family: Arial sans-serif;
@@ -61,11 +61,19 @@ html, body {
 
 #back-drop {
     position: absolute;
-    display: block;
+    display: none;
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.80);
     z-index: 9;
+}
+
+#under-construction {
+    position: absolute;
+    display: none;
+    top: 25%;
+    left: 36%;
+    z-index: 11;
 }
 
 #player1 {
