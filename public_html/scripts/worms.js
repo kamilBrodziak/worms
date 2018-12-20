@@ -1,5 +1,5 @@
 var Worm = class {
-    constructor(x, y, life, team) {
+    constructor(x, y, life, team, terrain) {
         this.img = new Image();
         this.img.src = "images/worm" + team + ".png";
         this.wormDOM = 0;
@@ -13,6 +13,7 @@ var Worm = class {
         this.active = false;
         this.gravityInterval = null;
         this.isJumping = true;
+        this.terrain = terrain;
     }
 
     load() {
@@ -36,12 +37,17 @@ var Worm = class {
 
         document.getElementById("gameBoard").appendChild(this.healthDOM);
 
+        this.loadChunks();        
+    }
+
+    loadChunks() {
         var imgCanvas = document.createElement('canvas');
         imgCanvas.width = this.size;
         imgCanvas.height = this.size;
         var imgCtx = imgCanvas.getContext("2d");
         var self = this;
         this.img.onload = function() {
+            self.chunks = [];
             imgCtx.drawImage(self.img, 0, 0, self.size, self.size);
 
             var alpha = imgCtx.getImageData(0, 0, self.size, self.size);
@@ -82,31 +88,37 @@ var Worm = class {
     }
 
     addMovement(terrain) {
+        var map = {37: false, 38: false, 39: false};
         var self = this;
-        window.addEventListener("keydown",function(e) {
-            if(self.life > 0) {
+        window.addEventListener("keyup", function(e) {
+            map[e.keyCode] = (e.type === 'keydown');
+            if(self.life > 0 && self.active) {
                 e.preventDefault();
-                self.move(e, terrain);
+                self.move(terrain, map);
+            }
+        });
+        window.addEventListener("keydown", function(e) {
+            map[e.keyCode] = (e.type === 'keydown');
+            if(self.life > 0 && self.active) {
+                e.preventDefault();
+                self.move(terrain, map);
             }
         });
     }
 
-    move(e, terrain) {
-        if(this.active) {
-            const left = 37;
-            const right = 39;
-            const up = 38;
-            const down = 40;
-            if(e.keyCode === left) {
-                this.changePos(terrain, -10, 0);
-            }
-            if(e.keyCode === right) {
-                this.changePos(terrain, 10, 0);
-            }
-            if(e.keyCode === up && !this.isJumping) {
-                var self = this;
-                self.jump(terrain, 120);
-            }
+    move(terrain, map) {
+        const left = 37;
+        const right = 39;
+        const up = 38;
+
+        if(map[left]) {
+            this.changePos(terrain, -10, 0);
+        }
+        if(map[right]) {
+            this.changePos(terrain, 10, 0);
+        }
+        if(map[up] && !this.isJumping) {
+            this.jump(terrain, 120);
         }
     }
 
@@ -191,11 +203,42 @@ var Worm = class {
         }
         return false;
     }
+    
+    loadDiePng() {
+        var imgCanvas = document.createElement('canvas');
+        var mapCanvas = document.getElementById("canvas");
+        var mapCtx = mapCanvas.getContext("2d");
+        imgCanvas.width = this.size;
+        imgCanvas.height = this.size;
+        var imgCtx = imgCanvas.getContext("2d");
+        var self = this;
+        this.img.onload = function() {
+            self.chunks = [];
+            imgCtx.drawImage(self.img, 0, 0, self.size, self.size);
+
+            var alpha = imgCtx.getImageData(0, 0, self.size, self.size);
+            for(var i = 0, y = self.yPos; i < self.size; ++i, ++y) {
+                for(var j = 0, x = self.xPos; j < self.size; ++j, ++x) {
+                    var alphaC = alpha.data[i*self.size*4 + j*4 + 3];
+                    if(alphaC !== 0) {
+                        self.terrain.chunks[y][x].visible = true;
+                        var temp = i*self.size*4 + j*4;
+                        mapCtx.fillStyle='rgba(' + alpha.data[temp] + "," + alpha.data[temp + 1] + 
+                            "," + alpha.data[temp + 2] + "," + alpha.data[temp + 3] + ")";
+                        mapCtx.fillRect(x,y,1,1);
+                    }
+                }
+            }
+        };
+    }
 
     die() {
         this.isJumping = true;
         this.healthDOM.parentNode.removeChild(this.healthDOM);
         this.active = false;
+        this.wormDOM.parentNode.removeChild(this.wormDOM);
+        this.img.src = "img/Worm-RIP.png";
+        this.loadDiePng();
         return true;
     }
 };
@@ -209,7 +252,7 @@ var Worms = class {
 
     loadWorms(count, size, team) {
         for(var i = 0, xPos = 0; i < count; ++i, xPos+=100) {
-            var worm = new Worm(xPos, 0, size, team);
+            var worm = new Worm(xPos, 0, size, team, this.terrain);
             this.wormList.push(worm);
             worm.load();
             worm.addGravity(this.terrain);
