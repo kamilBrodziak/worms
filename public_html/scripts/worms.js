@@ -5,7 +5,7 @@ var Worm = class {
         this.wormDOM = 0;
         this.xPos = x;
         this.yPos = y;
-        this.size = 80;
+        this.size = 60;
         this.life = life;
         this.team = team;
         this.speedX = 0;
@@ -13,8 +13,8 @@ var Worm = class {
         this.gravity = 0.05;
         this.gravitySpeed = 0;
         this.chunks = [];
-        this.active = true;
-        this.gravityInterval;
+        this.active = false;
+        this.gravityInterval = null;
         this.isJumping = true;
     }
 
@@ -51,7 +51,12 @@ var Worm = class {
 
     addGravity(terrain) {
         var self = this;
-        this.gravityInterval = setInterval(function() {self.changePos(terrain, 0, 1);}, 1);
+        this.gravityInterval = setInterval(function() {
+                var isChanged = self.changePos(terrain, 0, 1);
+                if(!isChanged) {
+                    self.isJumping = false;
+                }
+            }, 1);      
     }
 
     addMovement(terrain) {
@@ -75,21 +80,22 @@ var Worm = class {
                 this.changePos(terrain, 10, 0);
             }
             if(e.keyCode === up && !this.isJumping) {
-                this.jump(terrain, 120);
-                // this.changePos(terrain, 0, -120);
+                var self = this;
+                self.jump(terrain, 120);
             }
         }
     }
 
     jump(terrain, yMove) {
-        window.clearInterval(this.gravityInterval);
+        clearInterval(this.gravityInterval);
         this.isJumping = true;
 
         var self = this;
         var jumpInterval = setInterval(function () {
-            if (self.changePos(terrain, 0, -1) && yMove <= 0) {
-                window.clearInterval(jumpInterval);
+            self.changePos(terrain, 0, -1);
+            if (yMove <= 0) {
                 self.addGravity(terrain);
+                clearInterval(jumpInterval);
             }
             yMove--;
         }, 1);
@@ -107,22 +113,22 @@ var Worm = class {
             }
             return true;
         } else {
-            this.isJumping = false;
+            return false;
         }
-        return false;
     }
 
     isColliding(terrain, xMove, yMove) {
-        if( terrain.chunks.length === 0 || this.chunks.length === 0 ||
-            this.chunks[0][0] + xMove < 28 || this.chunks[0][0] + xMove > terrain.chunks[0].length ||
-            this.chunks[0][1] + yMove < 0 || this.chunks[0][1] + yMove > terrain.chunks.length) {
+        if( terrain.chunks.length === 0 || this.chunks.length === 0) {
                 return true;
             }
 
         for(var i = 0; i < this.chunks.length; ++i) {
             var terrChunk = terrain.getChunk(this.chunks[i][0] + xMove, this.chunks[i][1] + yMove);
-            if(terrChunk.visible) {
-                return true;
+            if(this.chunks[0][0] + xMove <= 0 ||
+                this.chunks[i][0] + xMove >= terrain.chunks[0].length ||
+                this.chunks[i][1] + yMove <= 0 || this.chunks[i][1] + yMove >= terrain.chunks.length ||
+                terrChunk.visible) {
+                    return true;
             }
         }
         return false;
