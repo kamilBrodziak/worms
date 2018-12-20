@@ -8,13 +8,13 @@ var BulletsMechanism = class {
         this.context = canvas.getContext("2d");
     } 
 
-    hitChunks(x, y, radius, context, worms, terrain, destroyChunk) {
+    hitChunks(x, y, radius, context, terrain, destroyChunk) {
         for(var xPlus = x, xMinus = x, k = radius; xPlus < radius + x; ++xPlus, --xMinus) {
             for(var yPlus = y, yMinus = y; yPlus < y + k; ++yPlus, --yMinus) {
-                destroyChunk(xPlus, yMinus,  terrain, worms, context);
-                destroyChunk(xPlus, yPlus, terrain, worms, context);
-                destroyChunk(xMinus, yMinus, terrain, worms, context);
-                destroyChunk(xMinus, yPlus, terrain, worms, context);
+                destroyChunk(xPlus, yMinus,  terrain, context);
+                destroyChunk(xPlus, yPlus, terrain, context);
+                destroyChunk(xMinus, yMinus, terrain, context);
+                destroyChunk(xMinus, yPlus, terrain, context);
             }
             //move to function:
             if(xPlus >= x + radius/6 && xPlus < x + 2*radius/6 && xPlus%3 === 0) {
@@ -31,27 +31,21 @@ var BulletsMechanism = class {
         }
     }
 
-    destroyChunk(x, y, terrain, worms, context) {
-        if(!terrain.chunks[y][x].isWormChunk) {
+    destroyChunk(x, y, terrain, context) {
+        if(terrain.chunks[y][x].visible) {
             context.clearRect(x, y, 1, 1);
             terrain.chunks[y][x].visible = false;
         }
     }
     
     load() {
-        var hitChunks = this.hitChunks;
-        var canvas = this.canvas;
-        var destructionRadius = this.destructionRadius;
-        var context = this.context;
-        var worms = this.worms;
-        var terrain = this.terrain;
-        var destroyChunk = this.destroyChunk;
+        var self = this;
         this.canvas.addEventListener("click", function(e) {
-            // var chunk = terrain.getChunk(e.clientX - canvas.offsetLeft,
-            //                         e.clientY - canvas.offsetTop);
-            hitChunks(e.clientX - canvas.offsetLeft,
-                e.clientY - canvas.offsetTop, destructionRadius,
-                context, worms, terrain, destroyChunk);
+            var canvasLeft = document.getElementById("gameBoard").offsetLeft;
+            var canvasTop = document.getElementById("gameBoard").offsetTop;
+            self.hitChunks(e.clientX - canvasLeft,
+                e.clientY - canvasTop, self.destructionRadius,
+                self.context, self.terrain, self.destroyChunk);
         });
     }
 }
