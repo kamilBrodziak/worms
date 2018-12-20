@@ -18,11 +18,12 @@ function gameLoad() {
 }
 
 function turns(wormsList) {
-    wormsList[0].active = true;
-    var i = 0;
-    setInterval(function() {
-            wormsList[i%5].active = false;
-            wormsList[++i%5].active = true;
-    }, 4000);
-        
+    if(wormsList.length !== 0) {
+        wormsList[0].active = true;
+        var i = 0;
+        setInterval(function() {
+                wormsList[i%wormsList.length].active = false;
+                wormsList[++i%wormsList.length].active = true;
+        }, 4000);
+    }
 }

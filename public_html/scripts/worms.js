@@ -3,15 +3,12 @@ var Worm = class {
         this.img = new Image();
         this.img.src = "images/worm" + team + ".png";
         this.wormDOM = 0;
+        this.healthDOM = null;
         this.xPos = x;
         this.yPos = y;
         this.size = 60;
         this.life = life;
         this.team = team;
-        this.speedX = 0;
-        this.speedY = 0;    
-        this.gravity = 0.05;
-        this.gravitySpeed = 0;
         this.chunks = [];
         this.active = false;
         this.gravityInterval = null;
@@ -27,6 +24,17 @@ var Worm = class {
         this.wormDOM.style.left = this.xPos + "px";
         this.wormDOM.style.top = this.yPos + "px";
         document.getElementById("gameBoard").appendChild(this.wormDOM);
+
+
+        this.healthDOM = document.createElement("DIV");
+        this.healthDOM.setAttribute("class", "wormHealth");
+        this.healthDOM.style.top = this.yPos - 20 + "px";
+        this.healthDOM.style.left = this.xPos + "px";
+        this.healthDOM.width = this.size;
+        this.healthDOM.height = 20;
+        this.healthDOM.innerHTML = Math.round(this.life);
+
+        document.getElementById("gameBoard").appendChild(this.healthDOM);
 
         var imgCanvas = document.createElement('canvas');
         imgCanvas.width = this.size;
@@ -49,6 +57,20 @@ var Worm = class {
         };
     }
 
+    addRotation() {
+        var self = this;
+        var wormCords = document.getElementById("gameBoard");
+        window.addEventListener("mousemove", function(e) {
+            if(self.active) {
+                var wormCenter=[wormCords.offsetLeft + self.xPos + self.size/2,
+                     wormCords.offsetTop + self.yPos + self.size/2];
+                var radians = Math.atan2(e.clientX - wormCenter[0], e.clientY - wormCenter[1]);
+                var angle = (radians * (180 / Math.PI) * -1) + 90;
+                self.wormDOM.style.transform = "rotate(" + angle + "deg)";
+            }
+        });
+    }
+
     addGravity(terrain) {
         var self = this;
         this.gravityInterval = setInterval(function() {
@@ -62,8 +84,10 @@ var Worm = class {
     addMovement(terrain) {
         var self = this;
         window.addEventListener("keydown",function(e) {
-            e.preventDefault();
-            self.move(e, terrain);
+            if(self.life > 0) {
+                e.preventDefault();
+                self.move(e, terrain);
+            }
         });
     }
 
@@ -107,6 +131,8 @@ var Worm = class {
             this.xPos += xMove;
             this.wormDOM.style.top = this.yPos + "px";
             this.wormDOM.style.left = this.xPos + "px";
+            this.healthDOM.style.left = this.xPos + "px";
+            this.healthDOM.style.top = this.yPos - 20 + "px";
             for(var i = 0; i < this.chunks.length; ++i) {
                 this.chunks[i][1] += yMove;
                 this.chunks[i][0] += xMove;
@@ -133,6 +159,45 @@ var Worm = class {
         }
         return false;
     }
+
+    takeDamage(health) {
+        this.life -= health;
+        this.healthDOM.innerHTML = Math.round(this.life);
+        var color;
+        if(this.life > 80) {
+            color = "green";
+        } else if (this.life > 60) {
+            color = "greenyellow";
+        } else if (this.life > 40) {
+            color = "yellow";
+        } else if (this.life > 20) {
+            color = "orange";
+        } else {
+            color = "red";
+        }
+        this.healthDOM.style.backgroundImage = "linear-gradient(to right, " + color + " " +
+            Math.round(this.life) + "%, transparent " + Math.round(this.life) + "%)"; 
+        if(this.life <= 0) {
+            return this.die();
+        }
+        return false;
+    }
+
+    hasChunk(x, y) {
+        for(var i = 0; i < this.chunks.length; ++i) {
+            if(this.chunks[i][0] === x && this.chunks[i][1] === y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    die() {
+        this.isJumping = true;
+        this.healthDOM.parentNode.removeChild(this.healthDOM);
+        this.active = false;
+        return true;
+    }
 };
 
 var Worms = class {
@@ -149,18 +214,18 @@ var Worms = class {
             worm.load();
             worm.addGravity(this.terrain);
             worm.addMovement(this.terrain);
+            worm.addRotation();
         }
         return this.wormList;
     }
 
-    isWormChunk(x, y) {
+    hitWorm(xBullet, yBullet) {
         for(var i = 0; i < this.wormList.length; ++i) {
-            var worm = this.wormList[i];
-            if(worm.hasChunk(x, y)) {
-                return true;
+            if(this.wormList[i].hasChunk(xBullet, yBullet)) {
+                if(this.wormList[i].takeDamage(0.02)) {
+                    this.wormList.splice(i, 1);
+                }
             }
         }
-        return false;
     }
-
-}
+};

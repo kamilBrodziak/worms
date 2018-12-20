@@ -1,7 +1,22 @@
 .worm {
     position: absolute;
+    pointer-events: none;
 }
 
 #gameBoard {
     position: relative;
+}
+
+.wormHealth {
+    position: absolute;
+    background-image: linear-gradient(to right, green, green);
+    width: 60px;
+    height: 10px;
+    border: 1px solid black;
+    font-size: 0.6vw;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    cursor: default;
+    pointer-events: none;
 }

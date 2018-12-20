@@ -8,34 +8,41 @@ var BulletsMechanism = class {
         this.context = canvas.getContext("2d");
     } 
 
-    hitChunks(x, y, radius, context, terrain, destroyChunk) {
-        for(var xPlus = x, xMinus = x, k = radius; xPlus < radius + x; ++xPlus, --xMinus) {
+    hitChunks(x, y) {
+        for(var xPlus = x, xMinus = x, k = this.destructionRadius;
+          xPlus < this.destructionRadius + x; ++xPlus, --xMinus) {
             for(var yPlus = y, yMinus = y; yPlus < y + k; ++yPlus, --yMinus) {
-                destroyChunk(xPlus, yMinus,  terrain, context);
-                destroyChunk(xPlus, yPlus, terrain, context);
-                destroyChunk(xMinus, yMinus, terrain, context);
-                destroyChunk(xMinus, yPlus, terrain, context);
+                this.destroyChunk(xPlus, yMinus, this.terrain, this.context, this.worms);
+                this.destroyChunk(xPlus, yPlus, this.terrain, this.context, this.worms);
+                this.destroyChunk(xMinus, yMinus, this.terrain, this.context, this.worms);
+                this.destroyChunk(xMinus, yPlus, this.terrain, this.context, this.worms);
             }
             //move to function:
-            if(xPlus >= x + radius/6 && xPlus < x + 2*radius/6 && xPlus%3 === 0) {
+            if(xPlus >= x + this.destructionRadius/6 &&
+                 xPlus < x + 2*this.destructionRadius/6 && xPlus%3 === 0) {
                 --k;
-            } else if(xPlus >= x + 2*radius/6 && xPlus < x + 3*radius/6 && xPlus%2 === 0) { 
+            } else if(xPlus >= x + 2*this.destructionRadius/6 &&
+                 xPlus < x + 3*this.destructionRadius/6 && xPlus%2 === 0) { 
                 --k;
-            } else if(xPlus >= x + 3*radius/6 && xPlus < x + 4*radius/6) {
+            } else if(xPlus >= x + 3*this.destructionRadius/6 &&
+                 xPlus < x + 4*this.destructionRadius/6) {
                 --k;
-            } else if(xPlus >= x + 4*radius/6 && xPlus < x + 5*radius/6) {
+            } else if(xPlus >= x + 4*this.destructionRadius/6 &&
+                 xPlus < x + 5*this.destructionRadius/6) {
                 k -= 2;
-            } else if(xPlus >= x + 5*radius/6) {
+            } else if(xPlus >= x + 5*this.destructionRadius/6) {
                 k -= 3;
             }
         }
     }
 
-    destroyChunk(x, y, terrain, context) {
+    destroyChunk(x, y, terrain, context, worms) {
         if(terrain.chunks[y][x].visible) {
             context.clearRect(x, y, 1, 1);
             terrain.chunks[y][x].visible = false;
         }
+
+        worms.hitWorm(x, y);
     }
     
     load() {
@@ -44,8 +51,7 @@ var BulletsMechanism = class {
             var canvasLeft = document.getElementById("gameBoard").offsetLeft;
             var canvasTop = document.getElementById("gameBoard").offsetTop;
             self.hitChunks(e.clientX - canvasLeft,
-                e.clientY - canvasTop, self.destructionRadius,
-                self.context, self.terrain, self.destroyChunk);
+                e.clientY - canvasTop);
         });
     }
 }
