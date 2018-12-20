@@ -9,13 +9,6 @@ function drawBoard() {
 
 function createTerrain(context) {
     var terrain = new Terrain(0, context);
-    var destructionRadius = 30;
-    canvas.addEventListener("click", function(e) {
-        // var chunk = terrain.getChunk(e.clientX - canvas.offsetLeft,
-        //                         e.clientY - canvas.offsetTop);
-        terrain.hitChunks(e.clientX - canvas.offsetLeft,
-            e.clientY - canvas.offsetTop, destructionRadius);
-    });
     return terrain;
 }
 
@@ -23,7 +16,7 @@ function createTerrain(context) {
 var Terrain = class {
     constructor(imgCount, context) {
         this.imgCount = imgCount;
-        this.imgSrc = "images/map" + (Math.random() * this.imgCount + 3) + ".png";
+        this.imgSrc = "images/map" + (Math.random() * this.imgCount + 4) + ".png";
         this.chunks = [];
         this.context = context;
     }
@@ -33,12 +26,13 @@ var Terrain = class {
     }
 
     load() {
+        var canvas = document.getElementById("canvas");
         var img = new Image();
         img.src = this.imgSrc;
         var chunks = this.chunks;
         var ctx = this.context;
         img.onload = function() {
-            ctx.drawImage(img, 0, -20);
+            ctx.drawImage(img, -75, 10, canvas.width + 220, canvas.height + 100);
             var alpha = ctx.getImageData(0, 0, canvas.width, canvas.height);
             for(var i = 0; i < canvas.height; ++i) {
                 var x = [];
@@ -47,22 +41,15 @@ var Terrain = class {
                     var alphaC = alpha.data[i*canvas.width*4 + j*4 + 3];
                     chunks[i].push(
                         {
-                            visible: (alphaC === 0) ? false : true 
+                            visible: (alphaC === 0) ? false : true,
+                            isWormChunk: false
                         }
                     );
                 }
             }
         };
     }
-
-    hitChunks(x, y, radius) {
-        this.context.globalCompositeOperation = 'destination-out';
-        this.context.arc(x, y, radius, 0, Math.PI*2, true);
-        this.context.fill();
-        this.context.closePath();
-    }
 };
-
 
 // var wormsList;
 

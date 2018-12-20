@@ -6,7 +6,23 @@ function gameLoad() {
     var context = canvas.getContext("2d");
     var terrain = createTerrain(context);
     terrain.load(canvas);
+    setTimeout(function() {
+        var worms = new Worms(context, terrain);
+        var wormsList = worms.loadWorms(5, 100, 2);
+        turns(wormsList);
+        var destructionRadius = canvas.offsetWidth/40;
+        var bulletsMechanism = new BulletsMechanism(canvas, terrain, destructionRadius, worms);
+        bulletsMechanism.load();
+    }, 50);
 
-    var worm = new Worm(0, 0, 100, 2);
-    worm.load(context);
+}
+
+function turns(wormsList) {
+    wormsList[0].active = true;
+    var i = 0;
+    setInterval(function() {
+            wormsList[i%5].active = false;
+            wormsList[++i%5].active = true;
+    }, 4000);
+        
 }
