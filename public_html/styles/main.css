@@ -15,21 +15,21 @@ html, body {
 #gameBoard {
     width: 80%;
     height: 100%;
-    border: 1px solid red;
+    border: 1px #5f7149;
     display: flex;
     flex-direction: column;
 }
 
 #nav {
     width: 20%;
-    border: 1px solid blue;
-    background: saddlebrown;
+    border: 1px solid #5f7149;
+    background: #5f7149;
 }
 
 .players{
     display: flex;
     height: 90%;
-    background: olive;
+    background: #5f7149;
     flex-direction: column;
     justify-content: center;
     align-content: center;
@@ -44,7 +44,7 @@ html, body {
     font-family: Arial sans-serif;
     font-size: 3rem;
     font-weight: bold;
-    color: yellow;
+    color: #5f7149;
     z-index: 10;
 
 }
@@ -109,6 +109,12 @@ html, body {
     justify-content: center;
     align-content: center;
     justify-items: center;
+    vertical-align: center;
+    padding-top: 1.8rem;
+    background-image: url("../img/Button-Player.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border: 3px solid #010101;
 }
 
 .game-button img{
@@ -120,35 +126,34 @@ html, body {
 #menu-button{
     height: 10%;
     width: 100%;
+    border-top: 1px solid #5f7149;
+}
 
-    border-top: 1px solid darkolivegreen;
+#menu-button img {
+    width: 100%;
+    height: 100%;
 }
 
 #footer {
-    /*display: flex;*/
+    box-sizing: border-box;
     width: 100%;
     height: 10%;
-    border: 1px solid black;
-    background-color: saddlebrown;
-    font-size: 60px;
-    font-weight: bold;
 
 }
-#footer #mark{
-    display: block;
-    justify-content: center;
-    text-align: center;
-    padding-top: 1%;
+#footer #mark img, #mark{
+    width: 100%;
+    height: 100%;
 }
 
 #footer .creators{
     display: flex;
+    font-family: Arial;
     position: absolute;
     justify-content: right;
     right: 2%;
     bottom: 2%;
     text-align: end;
-    margin-right: 20px;
-    font-size: 36px;
+    margin-right: 0.5rem;
+    font-size: 1.8rem;
     flex-direction: column;
 }
