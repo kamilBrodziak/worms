@@ -9,7 +9,7 @@ var BulletsMechanism = class {
     } 
 
     hitChunks(x, y) {
-        for(var xPlus = x, xMinus = x, k = this.destructionRadius;
+        for(let xPlus = x, xMinus = x, k = this.destructionRadius;
           xPlus < this.destructionRadius + x; ++xPlus, --xMinus) {
             for(var yPlus = y, yMinus = y; yPlus < y + k; ++yPlus, --yMinus) {
                 this.destroyChunk(xPlus, yMinus, this.terrain, this.context, this.worms);
@@ -60,7 +60,7 @@ var BulletsMechanism = class {
         var distanceY = yPos - clientY;
         var distanceX = clientX - xPos;
         var bullet = new Bullet(1,distanceX/150, distanceY/120);
-        bullet.loadNewBullet(xPos, yPos);
+            bullet.loadNewBullet(xPos, yPos);
         var self = this;
         var gameBoard = document.getElementById("gameBoard");
         var bulletInterval = setInterval(function() {
