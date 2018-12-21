@@ -12,7 +12,7 @@ function gameLoad() {
         turns(wormsList);
         var destructionRadius = canvas.offsetWidth/40;
         var bulletsMechanism = new BulletsMechanism(canvas, terrain, destructionRadius, worms);
-        bulletsMechanism.load();
+        worms.addBulletsMechanism(bulletsMechanism);
     }, 50);
 
 }
@@ -23,7 +23,8 @@ function turns(wormsList) {
         var i = 0;
         setInterval(function() {
                 wormsList[i%wormsList.length].active = false;
+                wormsList[i%wormsList.length].wormDOM.style.transform = "rotate(0deg)";
                 wormsList[++i%wormsList.length].active = true;
-        }, 4000);
+        }, 10000);
     }
 }

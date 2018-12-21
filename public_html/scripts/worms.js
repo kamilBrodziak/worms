@@ -2,7 +2,7 @@ var Worm = class {
     constructor(x, y, life, team, terrain) {
         this.img = new Image();
         this.img.src = "images/worm" + team + ".png";
-        this.wormDOM = 0;
+        this.wormDOM = null;
         this.healthDOM = null;
         this.xPos = x;
         this.yPos = y;
@@ -55,6 +55,7 @@ var Worm = class {
                 for(var j = 0, x = self.xPos; j < self.size; ++j, ++x) {
                     var alphaC = alpha.data[i*self.size*4 + j*4 + 3];
                     if(alphaC !== 0) {
+                        self.terrain.chunks[y][x].isWormChunk = true;
                         var chunk = [x, y];
                         self.chunks.push(chunk);
                     }
@@ -146,8 +147,10 @@ var Worm = class {
             this.healthDOM.style.left = this.xPos + "px";
             this.healthDOM.style.top = this.yPos - 20 + "px";
             for(var i = 0; i < this.chunks.length; ++i) {
+                this.terrain.chunks[this.chunks[i][1]][this.chunks[i][0]].isWormChunk = false;
                 this.chunks[i][1] += yMove;
                 this.chunks[i][0] += xMove;
+                this.terrain.chunks[this.chunks[i][1]][this.chunks[i][0]].isWormChunk = true;
             }
             return true;
         } else {
@@ -233,6 +236,10 @@ var Worm = class {
     }
 
     die() {
+        for(var i = 0; i < this.chunks.length; ++i) {
+            var chunk = this.chunks[i];
+            this.terrain.chunks[chunk[1]][chunk[0]].isWormChunk = false;
+        }
         this.isJumping = true;
         this.healthDOM.parentNode.removeChild(this.healthDOM);
         this.active = false;
@@ -240,6 +247,20 @@ var Worm = class {
         this.img.src = "img/Worm-RIP.png";
         this.loadDiePng();
         return true;
+    }
+    
+    addBulletsMechanism(bulletsMechanism) {
+        var self = this;
+        
+        document.getElementById("gameBoard").addEventListener("click", function(e) {
+            if(self.active) {
+                self.wormDOM.style.transform = "rotate(0deg)";
+                var centerX = self.xPos + self.size/2;
+                var centerY = self.yPos + self.size/2;
+                self.active = false;
+                bulletsMechanism.fireBullet(e, centerX, centerY, self);
+            }
+        });
     }
 };
 
@@ -251,8 +272,8 @@ var Worms = class {
     }
 
     loadWorms(count, size, team) {
-        for(var i = 0, xPos = 0; i < count; ++i, xPos+=100) {
-            var worm = new Worm(xPos, 0, size, team, this.terrain);
+        for(var i = 0, xPos = 20; i < count; ++i, xPos+=200) {
+            var worm = new Worm(xPos, 100, size, team, this.terrain);
             this.wormList.push(worm);
             worm.load();
             worm.addGravity(this.terrain);
@@ -265,10 +286,18 @@ var Worms = class {
     hitWorm(xBullet, yBullet) {
         for(var i = 0; i < this.wormList.length; ++i) {
             if(this.wormList[i].hasChunk(xBullet, yBullet)) {
-                if(this.wormList[i].takeDamage(0.02)) {
+                if(this.wormList[i].takeDamage(0.05)) {
                     this.wormList.splice(i, 1);
                 }
             }
         }
     }
+
+    addBulletsMechanism(bulletsMechanism) {
+        for(var i = 0; i < this.wormList.length; ++i) {
+            this.wormList[i].addBulletsMechanism(bulletsMechanism);
+        }
+    }
+
+
 };
