@@ -41,7 +41,6 @@ var BulletsMechanism = class {
             context.clearRect(x, y, 1, 1);
             terrain.chunks[y][x].visible = false;
         }
-
         worms.hitWorm(x, y);
     }
     
@@ -56,3 +55,15 @@ var BulletsMechanism = class {
     }
 }
 
+
+var Bullet = class {
+    constructor(mass, gravity, strength, angle) {
+        var mass = mass;
+        var gravity = gravity;
+        var strength = strength;
+        var angle = angle;
+        var chunks = [];
+        var xPos;
+        var yPos;
+    }
+};
